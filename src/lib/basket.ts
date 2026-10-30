@@ -5,18 +5,18 @@ import type { Line } from "./billing";
 
 export type Receipt = {
   orderId: string; txnId: string; date: string; method: string;
-  lines: Line[]; coupon?: string; status: "TEST PAYMENT – NOT REAL";
+  lines: Line[]; coupon?: string | undefined; status: "TEST PAYMENT – NOT REAL";
 };
 
 type State = {
   lines: Line[];
-  coupon?: string;
+  coupon?: string | undefined;
   recent: string[];
   receipts: Receipt[];
   add: (id: string) => boolean;
   setQty: (id: string, qty: number) => void;
   remove: (id: string) => void;
-  setCoupon: (c?: string) => void;
+  setCoupon: (c?: string | undefined) => void;
   view: (id: string) => void;
   completeTestPayment: (method: string) => Receipt;
 };

@@ -26,14 +26,14 @@ function Checkout() {
   const bill = computeBill(lines, coupon);
   const [code, setCode] = useState(coupon ?? "");
   const [step, setStep] = useState<"review" | "pay">("review");
-  const [method, setMethod] = useState(METHODS[0]);
+  const [method, setMethod] = useState<string>(METHODS[0]!);
   const nav = useNavigate();
 
   const apply = () => {
     const c = COUPONS.find((x) => x.code === code.trim().toUpperCase());
-    if (!c) return toast.error("Coupon not valid");
+    if (!c) { toast.error("Coupon not valid"); return; }
     const b = computeBill(lines, c.code);
-    if (!b.couponDiscount) return toast.error(`Spend at least ${inr(c.minSpend)} to use ${c.code}`);
+    if (!b.couponDiscount) { toast.error(`Spend at least ${inr(c.minSpend)} to use ${c.code}`); return; }
     setCoupon(c.code); toast.success(`${c.code} applied`);
   };
   const pay = () => {
