@@ -214,8 +214,7 @@ function Rig({ onNearCounter }: { onNearCounter: (near: boolean) => void }) {
     const nz = player.z + (fz * f + fx * s) * SPEED * dt;
     const c = collide(nx, nz); player.x = c.x; player.z = c.z;
     camera.position.set(player.x, 1.6, player.z);
-    camera.rotation.set(0, 0, 0);
-    camera.rotateY(-player.yaw); camera.rotateX(-player.pitch * -1);
+    camera.rotation.set(player.pitch, -player.yaw, 0, "YXZ");
     const isNear = Math.abs(player.x - COUNTER.x) < 4 && Math.abs(player.z - COUNTER.z) < 2.6;
     if (isNear !== near.current) { near.current = isNear; onNearCounter(isNear); }
   });
