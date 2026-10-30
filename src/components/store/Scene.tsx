@@ -63,7 +63,7 @@ function ProductInstances({ product, slots, selected, onPick }: {
   );
 }
 
-function Shelves({ selectedId, onPick }: { selectedId?: string; onPick: (p: Product) => void }) {
+function Shelves({ selectedId, onPick }: { selectedId?: string | undefined; onPick: (p: Product) => void }) {
   const { slotsById, tags } = useMemo(() => {
     const slotsById: Record<string, THREE.Vector3[]> = {};
     const tags: { p: Product; pos: [number, number, number]; rotY: number }[] = [];
@@ -105,7 +105,7 @@ function Shelves({ selectedId, onPick }: { selectedId?: string; onPick: (p: Prod
         </group>
       ))}
       {PRODUCTS.map((p) => slotsById[p.id] && (
-        <ProductInstances key={p.id} product={p} slots={slotsById[p.id]} selected={selectedId === p.id} onPick={onPick} />
+        <ProductInstances key={p.id} product={p} slots={slotsById[p.id]!} selected={selectedId === p.id} onPick={onPick} />
       ))}
       {tags.map(({ p, pos, rotY }) => (
         <Text key={p.id + pos[0]} position={pos} rotation={[0, rotY, 0]} fontSize={0.09} color="#1b3d2a" anchorX="center" outlineWidth={0.012} outlineColor="#fffde7">
@@ -163,7 +163,7 @@ function Room() {
         <planeGeometry args={[42, 38]} /><meshStandardMaterial map={floor} roughness={0.35} />
       </mesh>
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 4.5, -5]}><planeGeometry args={[42, 38]} /><meshStandardMaterial color="#fbfbf8" /></mesh>
-      {[[0, -24, 0], [0, 14, Math.PI], [-21, -5, Math.PI / 2], [21, -5, -Math.PI / 2]].map(([x, z, r], i) => (
+      {([[0, -24, 0], [0, 14, Math.PI], [-21, -5, Math.PI / 2], [21, -5, -Math.PI / 2]] as [number, number, number][]).map(([x, z, r], i) => (
         <mesh key={i} position={[x, 2.25, z]} rotation={[0, r, 0]}>
           <planeGeometry args={[i < 2 ? 42 : 38, 4.5]} /><meshStandardMaterial color={i === 0 ? "#dff0e3" : "#f4f6f0"} />
         </mesh>
@@ -204,9 +204,9 @@ function Rig({ onNearCounter }: { onNearCounter: (near: boolean) => void }) {
 
   useFrame((_, d) => {
     const dt = Math.min(d, 0.05), k = keys.current;
-    const f = (k.KeyW || k.ArrowUp ? 1 : 0) - (k.KeyS || k.ArrowDown ? 1 : 0) + player.input.f;
-    const s = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0) + player.input.s;
-    const turn = (k.ArrowRight ? 1 : 0) - (k.ArrowLeft ? 1 : 0) + player.input.turn;
+    const f = (k['KeyW'] || k['ArrowUp'] ? 1 : 0) - (k['KeyS'] || k['ArrowDown'] ? 1 : 0) + player.input.f;
+    const s = (k['KeyD'] ? 1 : 0) - (k['KeyA'] ? 1 : 0) + player.input.s;
+    const turn = (k['ArrowRight'] ? 1 : 0) - (k['ArrowLeft'] ? 1 : 0) + player.input.turn;
     player.yaw += turn * TURN * dt;
     // yaw 0 looks toward -z; positive yaw turns right
     const fx = Math.sin(player.yaw), fz = -Math.cos(player.yaw);
@@ -222,7 +222,7 @@ function Rig({ onNearCounter }: { onNearCounter: (near: boolean) => void }) {
 }
 
 export function StoreScene({ selectedId, onPick, onNearCounter }: {
-  selectedId?: string; onPick: (p: Product) => void; onNearCounter: (n: boolean) => void;
+  selectedId?: string | undefined; onPick: (p: Product) => void; onNearCounter: (n: boolean) => void;
 }) {
   return (
     <Canvas shadows dpr={[1, 1.75]} camera={{ fov: 70, near: 0.1, far: 80 }} onCreated={({ gl }) => gl.domElement.parentElement?.parentElement?.setAttribute("data-scene-ready", "1")}>
